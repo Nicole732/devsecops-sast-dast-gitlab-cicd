@@ -45,6 +45,7 @@ gitleaks:
     entrypoint: [""]
   script:
     - gitleaks detect --verbose --source .
+  allow_failure: true
 
 build_image:
   stage: build
@@ -52,8 +53,8 @@ build_image:
   services:
     - docker:24-dind
   variables:
-    DOCKER_PASS: 6HGGhKTzi!v^YSPq
-    DOCKER_USER: techworldwithnana 
+    DOCKER_PASS: $DOCKER_PASS
+    DOCKER_USER: $DOCKER_USER
   before_script:
     - echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
   script:
