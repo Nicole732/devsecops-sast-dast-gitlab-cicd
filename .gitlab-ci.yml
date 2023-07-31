@@ -38,6 +38,14 @@ yarn_test:
       - .yarn
     policy: pull
 
+gitleaks:
+  stage: test
+  image:
+    name: zricethezav/gitleaks
+    entrypoint: [""]
+  script:
+    - gitleaks detect --verbose --source .
+
 build_image:
   stage: build
   image: docker:24
