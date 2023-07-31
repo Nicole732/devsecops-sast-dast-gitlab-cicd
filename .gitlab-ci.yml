@@ -3,8 +3,24 @@ variables:
   IMAGE_TAG: juice-shop-1.1
 
 stages:
+  - cache
   - test
   - build
+
+create_cache:
+  image: node:18-bullseye
+  stage: cache
+  script:
+    - yarn install
+  cache:
+    key:
+      files:
+        - yarn.lock
+    paths:
+      - node_modules/
+      - yarn.lock
+      - .yarn
+    policy: pull-push
 
 yarn_test:
   image: node:18-bullseye
@@ -12,6 +28,15 @@ yarn_test:
   script:
     - yarn install
     - yarn test
+  cache:
+    key:
+      files:
+        - yarn.lock
+    paths:
+      - node_modules/
+      - yarn.lock
+      - .yarn
+    policy: pull
 
 build_image:
   stage: build
