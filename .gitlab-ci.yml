@@ -80,6 +80,8 @@ semgrep:
 upload_reports:
   stage: test
   image: python
+  needs: ["gitleaks"]
+  when: always
   before_script:
     - pip3 install requests
   script:
