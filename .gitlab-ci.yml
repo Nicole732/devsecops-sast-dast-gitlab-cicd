@@ -80,12 +80,14 @@ semgrep:
 upload_reports:
   stage: test
   image: python
-  needs: ["gitleaks"]
+  needs: ["gitleaks", "njsscan", "semgrep"]
   when: always
   before_script:
     - pip3 install requests
   script:
-    - python3 upload-reports.py
+    - python3 upload-reports.py gitleaks.json
+    - python3 upload-reports.py njsscan.sarif
+    - python3 upload-reports.py semgrep.json
 
 build_image:
   stage: build
