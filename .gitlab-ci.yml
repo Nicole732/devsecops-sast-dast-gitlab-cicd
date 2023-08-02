@@ -4,11 +4,14 @@ variables:
   AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
   AWS_ACCOUNT_ID: $AWS_ACCOUNT_ID
   IMAGE_NAME: $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/juice-shop
+  SERVER_IP: 35.180.67.168
+  SERVER_USER: ubuntu
 
 stages:
   - cache
   - test
   - build
+  - deploy
 
 create_cache:
   image: node:18-bullseye
@@ -128,3 +131,22 @@ build_image:
     - docker build -t $IMAGE_NAME:$CI_COMMIT_SHA -t $IMAGE_NAME:latest .
     - docker push $IMAGE_NAME:$CI_COMMIT_SHA
     - docker push $IMAGE_NAME:latest
+
+deploy_image:
+  stage: deploy
+  image: debian:bullseye-slim
+  before_script:
+    - apt update -y && apt install openssh-client -y
+    - eval $(ssh-agent -s)
+    - chmod 400 "$SSH_PRIVATE_KEY"
+    - ssh-add "$SSH_PRIVATE_KEY"
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+  script:
+    - ssh $SERVER_USER@$SERVER_IP "docker pull $IMAGE_NAME:latest"
+    - ssh $SERVER_USER@$SERVER_IP "docker stop juice-shop || true && docker rm juice-shop || true"
+    - ssh $SERVER_USER@$SERVER_IP "docker run -d --name juice-shop -p 3000:3000 $IMAGE_NAME:latest"
+
+
+
+
