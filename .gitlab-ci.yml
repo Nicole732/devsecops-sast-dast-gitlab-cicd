@@ -143,7 +143,8 @@ trivy:
     - aws ecr get-login-password | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
   script:
     - docker pull $IMAGE_NAME:$CI_COMMIT_SHA
-    - trivy image $IMAGE_NAME:$CI_COMMIT_SHA
+    - trivy image --severity HIGH,CRITICAL --exit-code 1 $IMAGE_NAME:$CI_COMMIT_SHA
+  allow_failure: true
 
 deploy_image:
   stage: deploy
