@@ -13,6 +13,37 @@ stages:
   - build
   - deploy
 
+create_cache:
+  image: node:18-bullseye
+  stage: cache
+  script:
+    - yarn install
+  cache:
+    key:
+      files:
+        - yarn.lock
+    paths:
+      - node_modules/
+      - yarn.lock
+      - .yarn
+    policy: pull-push
+
+yarn_test:
+  image: node:18-bullseye
+  stage: test
+  script:
+    - yarn install
+    - yarn test
+  cache:
+    key:
+      files:
+        - yarn.lock
+    paths:
+      - node_modules/
+      - yarn.lock
+      - .yarn
+    policy: pull
+
 gitleaks:
   stage: test
   image:
@@ -26,6 +57,66 @@ gitleaks:
     paths:
       - gitleaks.json
 
+njsscan:
+  stage: test
+  image: python
+  before_script:
+    - pip3 install --upgrade njsscan
+  script:
+    - njsscan --exit-warning . --sarif -o njsscan.sarif
+  allow_failure: true
+  artifacts:
+    when: always
+    paths:
+      - njsscan.sarif
+
+semgrep:
+  stage: test
+  image: returntocorp/semgrep
+  variables:
+    SEMGREP_RULES: p/javascript
+  script:
+    - semgrep ci --json --output semgrep.json
+  allow_failure: true
+  artifacts:
+    when: always
+    paths:
+      - semgrep.json
+
+retire:
+  stage: test
+  image: node:18-bullseye
+  cache:
+    key:
+      files:
+        - yarn.lock
+    paths:
+      - node_modules/
+      - yarn.lock
+      - .yarn
+    policy: pull
+  before_script:
+    - npm install -g retire
+  script:
+    - retire --path . --outputformat json --outputpath retire.json
+  allow_failure: true
+  artifacts:
+    when: always
+    paths:
+      - retire.json
+
+# upload_reports:
+  # stage: test
+  # image: python
+  # needs: ["gitleaks", "njsscan", "semgrep", "retire"]
+  # when: always
+  # before_script:
+    # - pip3 install requests
+  # script:
+    # - python3 upload-reports.py gitleaks.json
+    # - python3 upload-reports.py njsscan.sarif
+    # - python3 upload-reports.py semgrep.json
+    # - python3 upload-reports.py retire.json
 
 build_image:
   stage: build
@@ -35,15 +126,22 @@ build_image:
   before_script:
     - aws ecr get-login-password | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
   script:
+    - export DOCKER_BUILDKIT=0
     - docker build -t $IMAGE_NAME:latest -t $IMAGE_NAME:$CI_COMMIT_SHA .
     - docker push $IMAGE_NAME:$CI_COMMIT_SHA
     - docker push $IMAGE_NAME:latest
 
-
-
-
-
-
-
-
-
+deploy_image:
+  stage: deploy
+  image: debian:bullseye-slim
+  before_script:
+    - apt update -y && apt install openssh-client -y
+    - eval $(ssh-agent -s)
+    - chmod 400 "$SSH_PRIVATE_KEY"
+    - ssh-add "$SSH_PRIVATE_KEY"
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+  script:
+    - ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker pull $IMAGE_NAME:latest"
+    - ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker stop juice-shop || true && docker rm juice-shop || true"
+    - ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker run -d --name juice-shop -p 3000:3000 $IMAGE_NAME:latest"
