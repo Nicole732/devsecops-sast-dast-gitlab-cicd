@@ -15,19 +15,6 @@ stages:
 
 
 
-# upload_reports:
-  # stage: test
-  # image: python
-  # needs: ["gitleaks", "njsscan", "semgrep", "retire"]
-  # when: always
-  # before_script:
-    # - pip3 install requests
-  # script:
-    # - python3 upload-reports.py gitleaks.json
-    # - python3 upload-reports.py njsscan.sarif
-    # - python3 upload-reports.py semgrep.json
-    # - python3 upload-reports.py retire.json
-
 build_image:
   stage: build
   tags:
@@ -41,20 +28,7 @@ build_image:
     - docker push $IMAGE_NAME:$CI_COMMIT_SHA
     - docker push $IMAGE_NAME:latest
 
-deploy_image:
-  stage: deploy
-  image: debian:bullseye-slim
-  before_script:
-    - apt update -y && apt install openssh-client -y
-    - eval $(ssh-agent -s)
-    - chmod 400 "$SSH_PRIVATE_KEY"
-    - ssh-add "$SSH_PRIVATE_KEY"
-    - mkdir -p ~/.ssh
-    - chmod 700 ~/.ssh
-  script:
-    - ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker pull $IMAGE_NAME:latest"
-    - ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker stop juice-shop || true && docker rm juice-shop || true"
-    - ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker run -d --name juice-shop -p 3000:3000 $IMAGE_NAME:latest"
+
 
 
 
