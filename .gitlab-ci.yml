@@ -13,37 +13,6 @@ stages:
   - build
   - deploy
 
-create_cache:
-  image: node:18-bullseye
-  stage: cache
-  script:
-    - yarn install
-  cache:
-    key:
-      files:
-        - yarn.lock
-    paths:
-      - node_modules/
-      - yarn.lock
-      - .yarn
-    policy: pull-push
-
-yarn_test:
-  image: node:18-bullseye
-  stage: test
-  script:
-    - yarn install
-    - yarn test
-  cache:
-    key:
-      files:
-        - yarn.lock
-    paths:
-      - node_modules/
-      - yarn.lock
-      - .yarn
-    policy: pull
-
 gitleaks:
   stage: test
   image:
@@ -126,7 +95,6 @@ build_image:
   before_script:
     - aws ecr get-login-password | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
   script:
-    - export DOCKER_BUILDKIT=0
     - docker build -t $IMAGE_NAME:latest -t $IMAGE_NAME:$CI_COMMIT_SHA .
     - docker push $IMAGE_NAME:$CI_COMMIT_SHA
     - docker push $IMAGE_NAME:latest
