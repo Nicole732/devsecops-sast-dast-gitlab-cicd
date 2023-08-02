@@ -13,6 +13,21 @@ stages:
   - build
   - deploy
 
+create_cache:
+  image: node:18-bullseye
+  stage: cache
+  script:
+    - yarn install
+  cache:
+    key:
+      files:
+        - yarn.lock
+    paths:
+      - node_modules/
+      - yarn.lock
+      - .yarn
+    policy: pull-push
+
 gitleaks:
   stage: test
   image:
@@ -25,7 +40,6 @@ gitleaks:
     when: always
     paths:
       - gitleaks.json
-
 
 semgrep:
   stage: test
