@@ -11,6 +11,7 @@ stages:
   - cache
   - test
   - build
+  - upload-reports
   - deploy
 
 create_cache:
@@ -105,19 +106,6 @@ retire:
     paths:
       - retire.json
 
-# upload_reports:
-  # stage: test
-  # image: python
-  # needs: ["gitleaks", "njsscan", "semgrep", "retire"]
-  # when: always
-  # before_script:
-    # - pip3 install requests
-  # script:
-    # - python3 upload-reports.py gitleaks.json
-    # - python3 upload-reports.py njsscan.sarif
-    # - python3 upload-reports.py semgrep.json
-    # - python3 upload-reports.py retire.json
-
 build_image:
   stage: build
   tags:
@@ -143,8 +131,25 @@ trivy:
     - aws ecr get-login-password | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
   script:
     - docker pull $IMAGE_NAME:$CI_COMMIT_SHA
-    - trivy image --severity HIGH,CRITICAL --exit-code 1 $IMAGE_NAME:$CI_COMMIT_SHA
+    - trivy image -f json -o trivy.json --severity HIGH,CRITICAL --exit-code 1 $IMAGE_NAME:$CI_COMMIT_SHA
   allow_failure: true
+  artifacts:
+    when: always
+    paths:
+      - trivy.json
+
+upload_reports:
+  stage: upload-reports
+  image: python
+  when: always
+  before_script:
+    - pip3 install requests
+  script:
+    - python3 upload-reports.py gitleaks.json
+    - python3 upload-reports.py njsscan.sarif
+    - python3 upload-reports.py semgrep.json
+    - python3 upload-reports.py retire.json
+    - python3 upload-reports.py trivy.json
 
 deploy_image:
   stage: deploy

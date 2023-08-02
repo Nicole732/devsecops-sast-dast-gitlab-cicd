@@ -12,10 +12,12 @@ elif file_name == 'semgrep.json':
     scan_type = 'Semgrep JSON Report'
 elif file_name == 'retire.json':
     scan_type = 'Retire.js Scan'
+elif file_name == 'trivy.json':
+    scan_type = 'Trivy Scan'
 
 
 headers = {
-    'Authorization': 'Token e71f520d6cb842d4465dab1b1d9b97e04d7a231f'
+    'Authorization': 'Token ca679219925d52d40b438f197ceedfc1b9772491'
 }
 
 url = 'https://demo.defectdojo.org/api/v2/import-scan/'
@@ -25,7 +27,7 @@ data = {
     'verified': True,
     'scan_type': scan_type,
     'minimum_severity': 'Low',
-    'engagement': 19
+    'engagement': 22
 }
 
 files = {
