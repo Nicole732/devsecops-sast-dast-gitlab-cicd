@@ -143,9 +143,9 @@ deploy_image:
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
   script:
-    - ssh $SERVER_USER@$SERVER_IP "docker pull $IMAGE_NAME:latest"
-    - ssh $SERVER_USER@$SERVER_IP "docker stop juice-shop || true && docker rm juice-shop || true"
-    - ssh $SERVER_USER@$SERVER_IP "docker run -d --name juice-shop -p 3000:3000 $IMAGE_NAME:latest"
+    - ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker pull $IMAGE_NAME:latest"
+    - ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker stop juice-shop || true && docker rm juice-shop || true"
+    - ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker run -d --name juice-shop -p 3000:3000 $IMAGE_NAME:latest"
 
 
 
