@@ -57,6 +57,19 @@ gitleaks:
     paths:
       - gitleaks.json
 
+njsscan:
+  stage: test
+  image: python
+  before_script:
+    - pip3 install --upgrade njsscan
+  script:
+    - njsscan --exit-warning . --sarif -o njsscan.sarif
+  allow_failure: true
+  artifacts:
+    when: always
+    paths:
+      - njsscan.sarif
+
 semgrep:
   stage: test
   image: returntocorp/semgrep
@@ -113,6 +126,25 @@ build_image:
   before_script:
     - aws ecr get-login-password | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
   script:
+    - export DOCKER_BUILDKIT=0
     - docker build -t $IMAGE_NAME:latest -t $IMAGE_NAME:$CI_COMMIT_SHA .
     - docker push $IMAGE_NAME:$CI_COMMIT_SHA
     - docker push $IMAGE_NAME:latest
+
+deploy_image:
+  stage: deploy
+  image: debian:bullseye-slim
+  before_script:
+    - apt update -y && apt install openssh-client -y
+    - eval $(ssh-agent -s)
+    - chmod 400 "$SSH_PRIVATE_KEY"
+    - ssh-add "$SSH_PRIVATE_KEY"
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+  script:
+    - ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker pull $IMAGE_NAME:latest"
+    - ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker stop juice-shop || true && docker rm juice-shop || true"
+    - ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker run -d --name juice-shop -p 3000:3000 $IMAGE_NAME:latest"
+
+
+
