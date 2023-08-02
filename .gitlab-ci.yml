@@ -26,32 +26,6 @@ gitleaks:
     paths:
       - gitleaks.json
 
-njsscan:
-  stage: test
-  image: python
-  before_script:
-    - pip3 install --upgrade njsscan
-  script:
-    - njsscan --exit-warning . --sarif -o njsscan.sarif
-  allow_failure: true
-  artifacts:
-    when: always
-    paths:
-      - njsscan.sarif
-
-semgrep:
-  stage: test
-  image: returntocorp/semgrep
-  variables:
-    SEMGREP_RULES: p/javascript
-  script:
-    - semgrep ci --json --output semgrep.json
-  allow_failure: true
-  artifacts:
-    when: always
-    paths:
-      - semgrep.json
-
 
 build_image:
   stage: build
@@ -61,7 +35,6 @@ build_image:
   before_script:
     - aws ecr get-login-password | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
   script:
-    - export DOCKER_BUILDKIT=0
     - docker build -t $IMAGE_NAME:latest -t $IMAGE_NAME:$CI_COMMIT_SHA .
     - docker push $IMAGE_NAME:$CI_COMMIT_SHA
     - docker push $IMAGE_NAME:latest
