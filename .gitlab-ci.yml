@@ -26,18 +26,6 @@ gitleaks:
     paths:
       - gitleaks.json
 
-njsscan:
-  stage: test
-  image: python
-  before_script:
-    - pip3 install --upgrade njsscan
-  script:
-    - njsscan --exit-warning . --sarif -o njsscan.sarif
-  allow_failure: true
-  artifacts:
-    when: always
-    paths:
-      - njsscan.sarif
 
 semgrep:
   stage: test
