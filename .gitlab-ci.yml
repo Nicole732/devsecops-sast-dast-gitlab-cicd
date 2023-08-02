@@ -26,8 +26,6 @@ create_cache:
       - node_modules/
       - yarn.lock
       - .yarn
-      - frontend/node_modules/
-      - frontend/package-lock.json
     policy: pull-push
 
 yarn_test:
@@ -44,8 +42,6 @@ yarn_test:
       - node_modules/
       - yarn.lock
       - .yarn
-      - frontend/node_modules/
-      - frontend/package-lock.json
     policy: pull
 
 gitleaks:
@@ -120,18 +116,3 @@ build_image:
     - docker build -t $IMAGE_NAME:latest -t $IMAGE_NAME:$CI_COMMIT_SHA .
     - docker push $IMAGE_NAME:$CI_COMMIT_SHA
     - docker push $IMAGE_NAME:latest
-
-deploy_image:
-  stage: deploy
-  image: debian:bullseye-slim
-  before_script:
-    - apt update -y && apt install openssh-client -y
-    - eval $(ssh-agent -s)
-    - chmod 400 "$SSH_PRIVATE_KEY"
-    - ssh-add "$SSH_PRIVATE_KEY"
-    - mkdir -p ~/.ssh
-    - chmod 700 ~/.ssh
-  script:
-    - ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker pull $IMAGE_NAME:latest"
-    - ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker stop juice-shop || true && docker rm juice-shop || true"
-    - ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker run -d --name juice-shop -p 3000:3000 $IMAGE_NAME:latest"
