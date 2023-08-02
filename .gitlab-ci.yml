@@ -126,9 +126,23 @@ build_image:
   before_script:
     - aws ecr get-login-password | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
   script:
-    - docker build -t $IMAGE_NAME:latest -t $IMAGE_NAME:$CI_COMMIT_SHA .
+    - docker build -t $IMAGE_NAME:$CI_COMMIT_SHA -t $IMAGE_NAME:latest .
     - docker push $IMAGE_NAME:$CI_COMMIT_SHA
     - docker push $IMAGE_NAME:latest
+
+trivy:
+  stage: build
+  needs:
+    - build_image
+  tags:
+    - ec2
+    - shell
+  before_script:
+    - curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
+  script:
+    - aws ecr get-login-password | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+    - docker pull $IMAGE_NAME:$CI_COMMIT_SHA
+    - trivy image $IMAGE_NAME:$CI_COMMIT_SHA
 
 deploy_image:
   stage: deploy
