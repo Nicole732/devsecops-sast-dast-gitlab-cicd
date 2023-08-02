@@ -26,7 +26,27 @@ create_cache:
       - node_modules/
       - yarn.lock
       - .yarn
+      - frontend/node_modules/
+      - frontend/package-lock.json
     policy: pull-push
+
+yarn_test:
+  image: node:18-bullseye
+  stage: test
+  script:
+    - yarn install
+    - yarn test
+  cache:
+    key:
+      files:
+        - yarn.lock
+    paths:
+      - node_modules/
+      - yarn.lock
+      - .yarn
+      - frontend/node_modules/
+      - frontend/package-lock.json
+    policy: pull
 
 gitleaks:
   stage: test
