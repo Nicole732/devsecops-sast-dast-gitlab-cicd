@@ -54,7 +54,7 @@ zap:
 
 
 deploy_prod:
-  stage: deploy_prod
+  stage: deploy-prod
   script:
     - echo "deploying to production environment"
   when: manual
