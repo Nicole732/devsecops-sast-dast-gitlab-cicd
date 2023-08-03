@@ -11,6 +11,97 @@ stages:
   - deploy-test
   - deploy-prod
 
+create_cache:
+  image: node:18-bullseye
+  stage: cache
+  script:
+    - yarn install
+  cache:
+    key:
+      files:
+        - yarn.lock
+    paths:
+      - node_modules/
+      - yarn.lock
+      - .yarn
+    policy: pull-push
+
+yarn_test:
+  image: node:18-bullseye
+  stage: test
+  script:
+    - yarn install
+    - yarn test
+  cache:
+    key:
+      files:
+        - yarn.lock
+    paths:
+      - node_modules/
+      - yarn.lock
+      - .yarn
+    policy: pull
+
+gitleaks:
+  stage: test
+  image:
+    name: zricethezav/gitleaks
+    entrypoint: [""]
+  script:
+    - gitleaks detect --verbose --source . -f json -r gitleaks.json
+  allow_failure: true
+  artifacts:
+    when: always
+    paths:
+      - gitleaks.json
+
+njsscan:
+  stage: test
+  image: python
+  before_script:
+    - pip3 install --upgrade njsscan
+  script:
+    - njsscan --exit-warning . --sarif -o njsscan.sarif
+  allow_failure: true
+  artifacts:
+    when: always
+    paths:
+      - njsscan.sarif
+
+semgrep:
+  stage: test
+  image: returntocorp/semgrep
+  variables:
+    SEMGREP_RULES: p/javascript
+  script:
+    - semgrep ci --json --output semgrep.json
+  allow_failure: true
+  artifacts:
+    when: always
+    paths:
+      - semgrep.json
+
+retire:
+  stage: test
+  image: node:18-bullseye
+  cache:
+    key:
+      files:
+        - yarn.lock
+    paths:
+      - node_modules/
+      - yarn.lock
+      - .yarn
+    policy: pull
+  before_script:
+    - npm install -g retire
+  script:
+    - retire --path . --outputformat json --outputpath retire.json
+  allow_failure: true
+  artifacts:
+    when: always
+    paths:
+      - retire.json
 
 build_image:
   stage: build
@@ -24,6 +115,26 @@ build_image:
     - docker push $IMAGE_NAME:$CI_COMMIT_SHA
     - docker push $IMAGE_NAME:latest
 
+trivy:
+  stage: build
+  needs: ["build_image"]
+  image: docker:24
+  services:
+    - docker:24-dind
+  before_script:
+    - apk --no-cache add curl python3 py3-pip
+    - pip3 install --no-cache-dir awscli
+    - curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
+    - aws ecr get-login-password | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+  script:
+    - docker pull $IMAGE_NAME:$CI_COMMIT_SHA
+    - trivy image -f json -o trivy.json --severity HIGH,CRITICAL --exit-code 1 $IMAGE_NAME:$CI_COMMIT_SHA
+  allow_failure: true
+  artifacts:
+    when: always
+    paths:
+      - trivy.json
+
 deploy_test:
   stage: deploy-test
   tags:
@@ -36,7 +147,23 @@ deploy_test:
     - sleep 15
     - aws ssm get-command-invocation --command-id "$COMMAND_ID" --instance-id "i-00fef952b853e73b9"
 
-zap:
+zap_baseline:
+  stage: deploy-test
+  needs: ["deploy_test"]
+  image: owasp/zap2docker-stable
+  variables:
+    ZAP_TARGET: "http://35.180.67.168:3000"
+  before_script:
+    - mkdir -p /zap/wrk
+  script:
+    - zap-baseline.py -t $ZAP_TARGET -g gen.conf -I -x baseline.xml
+    - cp /zap/wrk/baseline.xml baseline.xml
+  artifacts:
+    when: always
+    paths:
+      - baseline.xml
+
+zap_full:
   stage: deploy-test
   needs: ["deploy_test"]
   image: owasp/zap2docker-stable
@@ -51,7 +178,6 @@ zap:
     when: always
     paths:
       - zap.xml
-
 
 deploy_prod:
   stage: deploy-prod
