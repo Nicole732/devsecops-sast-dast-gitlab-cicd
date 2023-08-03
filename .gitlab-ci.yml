@@ -45,12 +45,12 @@ zap:
   before_script:
     - mkdir -p /zap/wrk
   script:
-    - zap-baseline.py -t $ZAP_TARGET -g gen.conf -I -x baseline.xml
-    - cp /zap/wrk/baseline.xml baseline.xml
+    - zap-full-scan.py -t $ZAP_TARGET -g gen.conf -I -x zap.xml
+    - cp /zap/wrk/zap.xml zap.xml
   artifacts:
     when: always
     paths:
-      - baseline.xml
+      - zap.xml
 
 
 deploy_prod:
