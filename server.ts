@@ -28,7 +28,7 @@ const finale = require('finale-rest')
 const express = require('express')
 const compression = require('compression')
 const helmet = require('helmet')
-const featurePolicy = require('feature-policy')
+const permissionsPolicy = require('permission-policy')
 const errorhandler = require('errorhandler')
 const cookieParser = require('cookie-parser')
 const serveIndex = require('serve-index')
@@ -162,9 +162,20 @@ restoreOverwrittenFilesWithOriginals().then(() => {
   /* Security middleware */
   app.use(helmet.noSniff())
   app.use(helmet.frameguard())
+  app.use(helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'"],
+      styleSrc: ["'self'"],
+      imgSrc: ["'self'"],
+      connectSrc: ["'self'"],
+      frameAncestors: ["'self'"],
+      formAction: ["'self'"]
+    }
+  }))
   // app.use(helmet.xssFilter()); // = no protection from persisted XSS via RESTful API
   app.disable('x-powered-by')
-  app.use(featurePolicy({
+  app.use(permissionsPolicy({
     features: {
       payment: ["'self'"]
     }
