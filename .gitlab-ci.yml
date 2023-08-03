@@ -2,6 +2,7 @@ variables:
   AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
   AWS_ACCOUNT_ID: $AWS_ACCOUNT_ID
   IMAGE_NAME: $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/juice-shop
+  APP_URL: "15.188.81.73"
 
 stages:
   - cache
@@ -143,16 +144,16 @@ deploy_test:
   script:
     - LOG_IN_CMD="export AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION; aws ecr get-login-password | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com"
     - COMMANDS_TO_EXECUTE="docker pull $IMAGE_NAME:latest && (docker stop juice-shop || true) && (docker rm juice-shop || true) && docker run -d --name juice-shop -p 3000:3000 $IMAGE_NAME:latest"
-    - COMMAND_ID=$(aws ssm send-command --instance-ids "i-00fef952b853e73b9" --document-name "AWS-RunShellScript" --parameters "commands=[$LOG_IN_CMD, $COMMANDS_TO_EXECUTE]" --query "Command.CommandId" --output text)
+    - COMMAND_ID=$(aws ssm send-command --instance-ids "i-058c8df10daa6ea75" --document-name "AWS-RunShellScript" --parameters "commands=[$LOG_IN_CMD, $COMMANDS_TO_EXECUTE]" --query "Command.CommandId" --output text)
     - sleep 15
-    - aws ssm get-command-invocation --command-id "$COMMAND_ID" --instance-id "i-00fef952b853e73b9"
+    - aws ssm get-command-invocation --command-id "$COMMAND_ID" --instance-id "i-058c8df10daa6ea75"
 
 zap_baseline:
   stage: deploy-test
   needs: ["deploy_test"]
   image: owasp/zap2docker-stable
   variables:
-    ZAP_TARGET: "http://35.180.67.168:3000"
+    ZAP_TARGET: "http://$APP_URL:3000"
   before_script:
     - mkdir -p /zap/wrk
   script:
@@ -168,7 +169,7 @@ zap_full:
   needs: ["deploy_test"]
   image: owasp/zap2docker-stable
   variables:
-    ZAP_TARGET: "http://35.180.67.168:3000"
+    ZAP_TARGET: "http://$APP_URL:3000"
   before_script:
     - mkdir -p /zap/wrk
   script:
