@@ -19,8 +19,8 @@ build_image:
   services:
     - docker:24-dind
   variables:
-    - DOCKER_PASS: Ilovebabouantou237#
-    - DOCKER_USER: nicoleketch
+    - DOCKER_PASS: "Ilovebabouantou237#"
+    - DOCKER_USER: "nicoleketch"
   before_script:
     - echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
   script:
