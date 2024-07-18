@@ -16,7 +16,7 @@ Configure NJSScan in GitLab CI pipeline to run SAST scan against repository code
 Configure Semgrep in GitLab CI pipeline to run additional SAST scan against respository code
 
 ## OWASP Juice Shop
-We used the OWASP Juice Shop project as a start point. 
+
 ![Juice Shop Logo](https://raw.githubusercontent.com/juice-shop/juice-shop/master/frontend/src/assets/public/images/JuiceShop_Logo_100px.png) OWASP Juice Shop
 
 [![OWASP Flagship](https://img.shields.io/badge/owasp-flagship%20project-48A646.svg)](https://owasp.org/projects/#sec-flagships)
@@ -44,6 +44,7 @@ We used the OWASP Juice Shop project as a start point.
 > [But this doesn't have anything to do with juice.](https://twitter.com/coderPatros/status/1199268774626488320)
 > ([@coderPatros' wife](https://twitter.com/coderPatros))
 
+We used the OWASP Juice Shop project as a start point. 
 OWASP Juice Shop is probably the most modern and sophisticated insecure web application! It can be used in security
 trainings, awareness demos, CTFs and as a guinea pig for security tools! Juice Shop encompasses vulnerabilities from the
 entire
