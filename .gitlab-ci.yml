@@ -15,7 +15,7 @@ yarn_test:
 
 build_image:
   stage: build
-  image: docker:latest
+  image: docker:24
   services:
     - docker:24-dind
   variables:
