@@ -19,10 +19,10 @@ build_image:
   services:
     - docker:24-dind
   variables:
-    - $DOCKER_PASS: IloveBabouantou237#
+    - $DOCKER_PASS: Ilovebabouantou237#
     - $DOCKER_USER: nicoleketch
   before_script:
     - echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
   script:
-    - docker build -t $IMAGE_NAME:$IMAGE_TAG  .
+    - docker build -t $IMAGE_NAME:$IMAGE_TAG .
     - docker push $IMAGE_NAME:$IMAGE_TAG
