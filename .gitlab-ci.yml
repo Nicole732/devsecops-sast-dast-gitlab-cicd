@@ -1,6 +1,6 @@
 variables:
-  IMAGE_NAME: techworldwithnana/demo-app
-  IMAGE_TAG: juice-shop-1.1
+  IMAGE_NAME: "techworldwithnana/demo-app"
+  IMAGE_TAG: "juice-shop-1.1"
 
 stages:
   - test
