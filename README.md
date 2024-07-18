@@ -1,4 +1,16 @@
-# ![Juice Shop Logo](https://raw.githubusercontent.com/juice-shop/juice-shop/master/frontend/src/assets/public/images/JuiceShop_Logo_100px.png) OWASP Juice Shop
+# DevSecOps Bootcamp
+# Project:
+Setup Static Application Secret Testing (SAST) in GitLab CI pipeline using NJSScan and Semgrep.
+# Technologies used:
+GitLab CI, Git, NJSScan, Semgrep, Python
+#Project Description:
+Configure NJSScan in GitLab CI pipeline to run SAST scan against repository code
+Configure Semgrep in GitLab CI pipeline to run additional SAST scan against respository code
+
+# Pre-Requisite
+we are using the OWASP Juice Shop Project as out starting point.
+
+## ![Juice Shop Logo](https://raw.githubusercontent.com/juice-shop/juice-shop/master/frontend/src/assets/public/images/JuiceShop_Logo_100px.png) OWASP Juice Shop
 
 [![OWASP Flagship](https://img.shields.io/badge/owasp-flagship%20project-48A646.svg)](https://owasp.org/projects/#sec-flagships)
 [![GitHub release](https://img.shields.io/github/release/juice-shop/juice-shop.svg)](https://github.com/juice-shop/juice-shop/releases/latest)
@@ -36,7 +48,7 @@ applications!
 For a detailed introduction, full list of features and architecture overview please visit the official project page:
 <https://owasp-juice.shop>
 
-## Table of contents
+### Table of contents
 
 - [Setup](#setup)
     - [From Sources](#from-sources)
@@ -60,12 +72,12 @@ For a detailed introduction, full list of features and architecture overview ple
 - [Contributors](#contributors)
 - [Licensing](#licensing)
 
-## Setup
+### Setup
 
 > You can find some less common installation variations in
 > [the _Running OWASP Juice Shop_ documentation](https://pwning.owasp-juice.shop/part1/running.html).
 
-### From Sources
+#### From Sources
 
 ![GitHub repo size](https://img.shields.io/github/repo-size/juice-shop/juice-shop.svg)
 
@@ -96,7 +108,7 @@ For a detailed introduction, full list of features and architecture overview ple
 > `libxmljs` bound to the OS and node.js version which `npm install` was
 > executed on.
 
-### Docker Container
+#### Docker Container
 
 [![Docker Pulls](https://img.shields.io/docker/pulls/bkimminich/juice-shop.svg)](https://hub.docker.com/r/bkimminich/juice-shop)
 ![Docker Stars](https://img.shields.io/docker/stars/bkimminich/juice-shop.svg)
@@ -111,7 +123,7 @@ For a detailed introduction, full list of features and architecture overview ple
 4. Browse to <http://localhost:3000> (on macOS and Windows browse to
    <http://192.168.99.100:3000> if you are using docker-machine instead of the native docker installation)
 
-### Vagrant
+#### Vagrant
 
 1. Install [Vagrant](https://www.vagrantup.com/downloads.html) and
    [Virtualbox](https://www.virtualbox.org/wiki/Downloads)
@@ -121,7 +133,7 @@ For a detailed introduction, full list of features and architecture overview ple
 3. Run `cd vagrant && vagrant up`
 4. Browse to [192.168.56.110](http://192.168.56.110)
 
-### Amazon EC2 Instance
+#### Amazon EC2 Instance
 
 1. In the _EC2_ sidenav select _Instances_ and click _Launch Instance_
 2. In _Step 1: Choose an Amazon Machine Image (AMI)_ choose an _Amazon Linux AMI_ or _Amazon Linux 2 AMI_
@@ -139,7 +151,7 @@ docker pull bkimminich/juice-shop
 docker run -d -p 80:3000 bkimminich/juice-shop
 ```
 
-### Azure Container Instance
+#### Azure Container Instance
 
 1. Open and login (via `az login`) to your
    [Azure CLI](https://azure.github.io/projects/clis/) **or** login to the [Azure Portal](https://portal.azure.com),
@@ -150,7 +162,7 @@ docker run -d -p 80:3000 bkimminich/juice-shop
    running `az container create --resource-group <group name> --name <container name> --image bkimminich/juice-shop --dns-name-label <dns name label> --ports 3000 --ip-address public`
 4. Your container will be available at `http://<dns name label>.<location name>.azurecontainer.io:3000`
 
-### Google Compute Engine Instance
+#### Google Compute Engine Instance
 
 1. Login to the Google Cloud Console and
    [open Cloud Shell](https://console.cloud.google.com/home/dashboard?cloudshell=true).
@@ -180,7 +192,7 @@ gcloud compute firewall-rules create juice-rule --allow tcp:3000
 If you have forked the Juice Shop repository on GitHub, the _Deploy to
 Heroku_ button will deploy your forked version of the application.
 
-### Gitpod 
+#### Gitpod 
 
 1. Login to [gitpod.io](https://gitpod.io) and use <https://gitpod.io/#https://github.com/juice-shop/juice-shop/> to start a new workspace. If you want to spin up a forked repository, your URL needs to be adjusted accordingly.
 
@@ -188,7 +200,7 @@ Heroku_ button will deploy your forked version of the application.
 
 3. Your Juice Shop instance is now also available at `https://3000-<GITPOD_WORKSPACE_ID>.<GITPOD_HOSTING_ZONE>.gitpod.io`.
 
-## Demo
+### Demo
 
 Feel free to have a look at the latest version of OWASP Juice Shop:
 <http://demo.owasp-juice.shop>
@@ -197,9 +209,9 @@ Feel free to have a look at the latest version of OWASP Juice Shop:
 > supposed__ to use this instance for your own hacking endeavours! No
 > guaranteed uptime! Guaranteed stern looks if you break it!
 
-## Documentation
+### Documentation
 
-### Node.js version compatibility
+#### Node.js version compatibility
 
 ![GitHub package.json dynamic](https://img.shields.io/github/package-json/cpu/bkimminich/juice-shop)
 ![GitHub package.json dynamic](https://img.shields.io/github/package-json/os/bkimminich/juice-shop)
@@ -224,7 +236,7 @@ Juice Shop is automatically tested _only on the latest `.x` minor version_ of ea
 There is no guarantee that older minor node.js releases will always work with Juice Shop!
 Please make sure you stay up to date with your chosen version.
 
-### Troubleshooting
+#### Troubleshooting
 
 [![Gitter](http://img.shields.io/badge/gitter-join%20chat-1dce73.svg)](https://gitter.im/bkimminich/juice-shop)
 
@@ -235,7 +247,7 @@ guide. If this does not solve your issue please post your specific problem or qu
 
 :stop_sign: **Please avoid opening GitHub issues for support requests or questions!**
 
-### Official companion guide
+#### Official companion guide
 
 [![Write Goodreads Review](https://img.shields.io/badge/goodreads-write%20review-49557240.svg)](https://www.goodreads.com/review/edit/49557240)
 
@@ -254,7 +266,7 @@ and is available **for free** in PDF, Kindle and ePub format on LeanPub. You can
 
 [![Pwning OWASP Juice Shop Cover](https://raw.githubusercontent.com/bkimminich/pwning-juice-shop/master/cover_small.jpg)](https://leanpub.com/juice-shop)
 
-## Contributing
+### Contributing
 
 [![GitHub contributors](https://img.shields.io/github/contributors/bkimminich/juice-shop.svg)](https://github.com/bkimminich/juice-shop/graphs/contributors)
 [![JavaScript Style Guide](https://img.shields.io/badge/code%20style-standard-brightgreen.svg)](http://standardjs.com/)
@@ -274,7 +286,7 @@ joined a conference talk or meetup session, a hacking workshop or public trainin
 
 Add it to our ever-growing list of [REFERENCES.md](REFERENCES.md) by forking and opening a Pull Request!
 
-## Merchandise
+### Merchandise
 
 * On [Spreadshirt.com](http://shop.spreadshirt.com/juiceshop) and
   [Spreadshirt.de](http://shop.spreadshirt.de/juiceshop) you can get some swag (Shirts, Hoodies, Mugs) with the official
@@ -318,7 +330,7 @@ The OWASP Juice Shop core project team are:
 For a list of all contributors to the OWASP Juice Shop please visit our
 [HALL_OF_FAME.md](HALL_OF_FAME.md).
 
-## Licensing
+### Licensing
 
 [![license](https://img.shields.io/github/license/bkimminich/juice-shop.svg)](LICENSE)
 
