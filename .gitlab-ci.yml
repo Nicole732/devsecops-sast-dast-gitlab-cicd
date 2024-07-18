@@ -24,8 +24,10 @@ build_image:
   before_script:
     - echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
   script:
-    #pulling image to my personal account
-    #- docker pull $IMAGE_NAME:$IMAGE_TAG
-    #- docker tag $IMAGE_NAME:$IMAGE_TAG $DOCKER_USER/$IMAGE_NAME:$IMAGE_TAG
+    #cloning image to my personal account
+    - docker pull $IMAGE_NAME:$IMAGE_TAG
+    - docker tag $IMAGE_NAME:$IMAGE_TAG $DOCKER_USER/$IMAGE_NAME:$IMAGE_TAG
+    - docker push $DOCKER_USER/$IMAGE_NAME:$IMAGE_TAG
+    # build from cloned image
     - docker build -t $DOCKER_USER/$IMAGE_NAME:$IMAGE_TAG .
     - docker push $DOCKER_USER/$IMAGE_NAME:$IMAGE_TAG
