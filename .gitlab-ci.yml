@@ -3,8 +3,24 @@ variables:
   IMAGE_TAG: "juice-shop-1.1"
 
 stages:
+  - cache
   - test
   - build
+
+create cache:
+  image: node:18-bullseye
+  stage: cache
+  script:
+    - yarn install
+  cache:
+    key:
+      files: 
+        - yarn.lock
+      paths:
+        - node_modules/
+        - yarn.lock
+        - .yarn
+      policies: pull-push
 
 yarn_test:
   image: node:18-bullseye
@@ -12,6 +28,15 @@ yarn_test:
   script:
     - yarn install
     - yarn test
+  cache:
+    key:
+      files: 
+        - yarn.lock
+      paths:
+        - node_modules/
+        - yarn.lock
+        - .yarn
+      policies: pull-push
 
 build_image:
   stage: build
@@ -23,7 +48,7 @@ build_image:
     DOCKER_USER: "nicoleketch"
   before_script:
     # provides login credentials for dockerhub account
-    - echo $DOCKER_PASS  | docker login -u $DOCKER_USER --password-stdin #docker.io
+    - echo $DOCKER_PASS  | docker login -u $DOCKER_USER --password-stdin 
   script:
     # cloned initial image to my personal account 
     - docker build -t $DOCKER_USER/$IMAGE_NAME:$IMAGE_TAG .
