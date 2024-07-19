@@ -36,7 +36,7 @@ yarn_test:
         - node_modules/
         - yarn.lock
         - .yarn
-      policies: pull-push
+      policy: pull-push
 
 build_image:
   stage: build
