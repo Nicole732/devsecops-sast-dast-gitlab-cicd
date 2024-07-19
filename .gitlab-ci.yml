@@ -16,11 +16,11 @@ create cache:
     key:
       files: 
         - yarn.lock
-      paths:
-        - node_modules/
-        - yarn.lock
-        - .yarn
-      policy: pull-push
+    paths:
+      - node_modules/
+      - yarn.lock
+      - .yarn
+    policy: pull-push
 
 yarn_test:
   image: node:18-bullseye
@@ -32,11 +32,11 @@ yarn_test:
     key:
       files: 
         - yarn.lock
-      paths:
-        - node_modules/
-        - yarn.lock
-        - .yarn
-      policy: pull-push
+    paths:
+      - node_modules/
+      - yarn.lock
+      - .yarn
+    policy: pull-push
 
 build_image:
   stage: build
