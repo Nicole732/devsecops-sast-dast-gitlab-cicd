@@ -23,7 +23,7 @@ build_image:
     DOCKER_USER: "nicoleketch"
   before_script:
     # provides login credentials for dockerhub account
-    - echo docker login -u $DOCKER_USER --password-stdin $DOCKER_PASS docker.io
+    - echo $DOCKER_PASS  | docker login -u $DOCKER_USER --password-stdin #docker.io
   script:
     # cloned initial image to my personal account 
     - docker build -t $DOCKER_USER/$IMAGE_NAME:$IMAGE_TAG .
