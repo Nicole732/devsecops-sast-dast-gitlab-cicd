@@ -20,7 +20,7 @@ create cache:
         - node_modules/
         - yarn.lock
         - .yarn
-      policies: pull-push
+      policy: pull-push
 
 yarn_test:
   image: node:18-bullseye
