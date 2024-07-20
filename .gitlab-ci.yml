@@ -5,8 +5,10 @@ variables:
 stages:
   - cache
   - test
+  - secrets
   - build
 
+# creates a cahe to speed up deployments
 create cache:
   image: node:18-bullseye
   stage: cache
@@ -38,6 +40,16 @@ yarn_test:
       - .yarn
     policy: pull-push
 
+# scan for secrets
+gitleaks: 
+  stage: test
+  image:
+    name: zricethezav/gitleaks
+    entrypoint: [""]
+  script:
+  - gitleaks detect --verbose --source .
+
+# builds an image from application code
 build_image:
   stage: build
   image: docker:24
