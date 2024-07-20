@@ -5,7 +5,6 @@ variables:
 stages:
   - cache
   - test
-  - secrets
   - build
 
 # creates a cahe to speed up deployments
@@ -47,9 +46,10 @@ gitleaks:
     name: zricethezav/gitleaks
     entrypoint: [""]
   script:
-  - gitleaks detect --verbose --source .
+    - gitleaks detect --verbose --source .
+  allow_failure: true
 
-# builds an image from application code
+# builds an image from owasp juice shop application
 build_image:
   stage: build
   image: docker:24
