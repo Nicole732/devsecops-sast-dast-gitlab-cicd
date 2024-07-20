@@ -49,6 +49,15 @@ gitleaks:
     - gitleaks detect --verbose --source .
   allow_failure: true
 
+# add sast scan with njsscan tool for node.js
+njsscan:
+  stage: test
+  image: python
+  before_script:
+    - pip3 install --upgrade njsscan
+  script:
+    - njsscan .
+
 # builds an image from owasp juice shop application
 build_image:
   stage: build
