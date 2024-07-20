@@ -56,8 +56,8 @@ build_image:
   services:
     - docker:24-dind
   variables:
-    DOCKER_PASS: "Ilovebabouantou237#"
-    DOCKER_USER: "nicoleketch"
+    DOCKER_PASS: $DOCKER_PASS
+    DOCKER_USER: $DOCKER_USER
   before_script:
     # provides login credentials for dockerhub account
     - echo $DOCKER_PASS  | docker login -u $DOCKER_USER --password-stdin 
@@ -65,3 +65,5 @@ build_image:
     # cloned initial image to my personal account 
     - docker build -t $DOCKER_USER/$IMAGE_NAME:$IMAGE_TAG .
     - docker push $DOCKER_USER/$IMAGE_NAME:$IMAGE_TAG
+
+
