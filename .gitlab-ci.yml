@@ -85,12 +85,14 @@ semgrep:
 upload_reports:
   stage: test
   image: python
-  needs: ['gitleaks']
+  needs: ['gitleaks','njsscan','semgrep']
   when: always
   before_script:
     - pip3 install requests
   script: 
-    - python3 upload-reports.py
+    - python3 upload-reports.py gitteaks.json
+    - python3 upload-reports.py njsscan.sarif
+    - python3 upload-reports.py semgrep.json
 
 # builds an image from owasp juice shop application
 build_image:
