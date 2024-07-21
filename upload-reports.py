@@ -6,7 +6,7 @@ scan_type = ''
 
 if file_name == 'gitleaks.json':
     scan_type = 'Gitleaks Scan'
-elif file_name == 'njsscan.serif':
+elif file_name == 'njsscan.sarif':
     scan_type = 'SARIF'
 elif file_name == 'semgrep.json':
     scan_type = 'Semgrep JSON Report'
