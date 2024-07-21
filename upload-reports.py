@@ -12,7 +12,7 @@ data = {
     'verified': True,
     'scan_type': 'Gitleaks Scan',
     'minimum_severity': 'Low',
-    'engagement': 35
+    'engagement': 19
 }
 
 files = {
