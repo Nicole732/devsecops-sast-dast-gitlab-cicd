@@ -90,7 +90,7 @@ upload_reports:
   before_script:
     - pip3 install requests
   script: 
-    - python3 upload-reports.py gitteaks.json
+    - python3 upload-reports.py gitleaks.json
     - python3 upload-reports.py njsscan.sarif
     - python3 upload-reports.py semgrep.json
 
