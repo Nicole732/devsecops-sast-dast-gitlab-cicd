@@ -1,19 +1,44 @@
 # DevSecOps Bootcamp: Application Vulnerability Scanning
 ## Project Details
-Setup Static Application Secret Testing (SAST) in GitLab CI pipeline using NJSScan and Semgrep.
+**Part 1**: Setup Secrets Scanning in GitLab CI and Pre-Commit Script using GitLeaks
+**Part 2**: Setup Static Application Secret Testing (SAST) in GitLab CI pipeline using NJSScan and Semgrep.
+**Part 3**: Upload Security Scan Results Automatically to DefectDojo
+**Part 4**: Remediate Weak Cryptography and SQL Injection Vulnerabilities in Application based on Security Findings
+**Part 5**: Setup SCA Scanning using RetireJS and Upload Findings to DefectDojo
 
 ## Table of contents
 
 - [Technologies used](#Technologies-Used)
+- [Project Description](#Project-Description)
 - [OWASP Juice Shop](#OWASP-Juice-Shop)
 - [Contributors](#contributors)
 - [Licensing](#licensing)
 
 ## Technologies Used
-GitLab CI, Git, NJSScan, Semgrep, Python
-#Project Description:
-Configure NJSScan in GitLab CI pipeline to run SAST scan against repository code
-Configure Semgrep in GitLab CI pipeline to run additional SAST scan against respository code
+GitLab CI, JavaScript, Git, NJSScan, Semgrep, Gitleaks, DefectDojo, Python
+
+## Project Description:
+**Part 1**
+- Configure GitLeaks job in GitLab CI to check commits for secrets
+- Create a Git pre-commit hook script that runs GitLeaks using Docker, and performs GitLeaks scan before code is committed
+
+**Part 2**
+- Configure NJSScan in GitLab CI pipeline to run SAST scan against repository code
+- Configure Semgrep in GitLab CI pipeline to run additional SAST scan against respository code
+
+**Part 3**
+- Create Python script that connects to DefectDojo via API key
+- Create Python script to upload GitLeaks, Semgrep, and NJSScan files from GitLab CI security scanning jobs to DefectDojo
+- Add a new job in GitLab CI pipeline to run the Python script to upload findings to DefectDojo as part of the pipeline execution
+
+**Part 4**
+- Update application code to remediate weak hash function, based on NJSScan security finding in DefectDojo
+- Update application code to remediate SQL injection vulnerability, based on Semgrep security finding in DefectDojo
+
+**Part 5**
+- Create new GitLab CI pipeline job for automated SCA scanning using RetireJS
+- Configure the job to save the SCA scan reports as an artifact
+- Upload the RetireJS scan report to DefectDojo using Python automation script
 
 ## OWASP Juice Shop
 
