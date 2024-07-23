@@ -96,7 +96,7 @@ retire:
   before_script:
     - npm install -g retire
   script:
-    - retire --path . --outputformat json outputpath retire.json
+    - retire --path . --outputformat json --outputpath retire.json
   allow_failure: true
   artifacts:
     when: always
