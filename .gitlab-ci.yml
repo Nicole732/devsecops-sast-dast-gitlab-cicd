@@ -106,7 +106,7 @@ retire:
 upload_reports:
   stage: test
   image: python
-  needs: ['gitleaks','njsscan','semgrep', 'retire.json']
+  needs: ['gitleaks','njsscan','semgrep', 'retire']
   when: always
   before_script:
     - pip3 install requests
