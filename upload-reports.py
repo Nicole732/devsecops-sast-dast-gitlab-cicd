@@ -12,7 +12,7 @@ elif file_name == 'semgrep.json':
     scan_type = 'Semgrep JSON Report'
 
 headers = {
-    'Authorization': 'Token 548afd6fab3bea9794a41b31da0e9404f733e222'
+    'Authorization': 'Token d2f4239f6d357913c2587c5601cb2cdbaf85e47b'
 }
 
 url = 'https://demo.defectdojo.org/api/v2/import-scan/'
@@ -35,4 +35,4 @@ response = requests.post(url, headers=headers, data=data, files=files)
 if response.status_code == 201:
     print('Scan imported successfully')
 else:
-    print('Failed to import scan results: {response.content}')
+    print(f'Failed to import scan results: {response.content}')
