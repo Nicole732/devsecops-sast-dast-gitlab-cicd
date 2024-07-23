@@ -11,7 +11,7 @@ elif file_name == 'njsscan.sarif':
 elif file_name == 'semgrep.json':
     scan_type = 'Semgrep JSON Report'
 elif file_name == 'retire.json':
-    scan_type = 'Retire.json Scan'
+    scan_type = 'Retire.js Scan'
 
 headers = {
     'Authorization': 'Token d2f4239f6d357913c2587c5601cb2cdbaf85e47b'
