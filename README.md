@@ -1,4 +1,4 @@
-# DevSecOps Bootcamp: Application Vulnerability Scanning
+# DevSecOps Bootcamp: Build 
 ## Project Details
 **Part 1**: Setup Secrets Scanning in GitLab CI and Pre-Commit Script using GitLeaks
 **Part 2**: Setup Static Application Secret Testing (SAST) in GitLab CI pipeline using NJSScan and Semgrep.
