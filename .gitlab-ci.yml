@@ -1,6 +1,9 @@
 variables:
-  IMAGE_NAME: "devsecops-demo-nana"
-  IMAGE_TAG: "juice-shop-1.1"
+  AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+  AWS_ACCOUNT_ID: $AWS_ACCOUNT_ID
+  AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
+  AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+  IMAGE_NAME: $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/juice-shop
 
 stages:
   - cache
@@ -47,6 +50,7 @@ gitleaks:
     entrypoint: [""]
   script:
     - gitleaks detect --verbose --source . -f json -r gitleaks.json
+  #allows build even if issues are found
   allow_failure: true
   artifacts:
     when: always
@@ -104,18 +108,18 @@ retire:
       - retire.json
 
 # integrate findings using python script that queries defectdojo api
-upload_reports:
-  stage: test
-  image: python
-  needs: ['gitleaks','njsscan','semgrep', 'retire']
-  when: always
-  before_script:
-    - pip3 install requests
-  script: 
-    - python3 upload-reports.py gitleaks.json
-    - python3 upload-reports.py njsscan.sarif
-    - python3 upload-reports.py semgrep.json
-    - python3 upload-reports.py retire.json
+#upload_reports:
+# stage: test
+# image: python
+#  needs: ['gitleaks','njsscan','semgrep', 'retire']
+#  when: always
+#  before_script:
+#    - pip3 install requests
+#  script: 
+#    - python3 upload-reports.py gitleaks.json
+#    - python3 upload-reports.py njsscan.sarif
+#    - python3 upload-reports.py semgrep.json
+#    - python3 upload-reports.py retire.json
 
 # builds an image from owasp juice shop application
 build_image:
@@ -123,16 +127,16 @@ build_image:
   image: docker:24
   services:
     - docker:24-dind
-  variables:
-    DOCKER_PASS: $DOCKER_PASS
-    DOCKER_USER: $DOCKER_USER
   before_script:
-    # provides login credentials for dockerhub account
-    - echo $DOCKER_PASS  | docker login -u $DOCKER_USER --password-stdin 
+    - apk --no-cache add curl python3 py3-pip
+    - pip3 install --no-cache-dir awscli
+    # provides login credentials for AWS ECR repo 
+    - aws ecr get-login-password | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
   script:
-    # cloned initial image to my personal account 
-    - docker build -t $DOCKER_USER/$IMAGE_NAME:$IMAGE_TAG .
-    - docker push $DOCKER_USER/$IMAGE_NAME:$IMAGE_TAG
+    # uses dynamic tags and two tags
+    - docker build -t $IMAGE_NAME:$CI_COMMIT_SHA -t $IMAGE_NAME:latest .
+    - docker push $IMAGE_NAME:$CI_COMMIT_SHA
+    - docker push $IMAGE_NAME:latest
 
 
 
