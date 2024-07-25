@@ -4,11 +4,14 @@ variables:
   AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
   AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
   IMAGE_NAME: $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/juice-shop
+  SERVER_IP: 18.234.206.150
+  SERVER_USER: ubuntu
 
 stages:
   - cache
   - test
   - build
+  - deploy
 
 # creates a cahe to speed up deployments
 create cache:
@@ -136,8 +139,21 @@ build_image:
     # uses dynamic tags and two tags
     - docker build -t $IMAGE_NAME:$CI_COMMIT_SHA -t $IMAGE_NAME:latest .
     - docker push $IMAGE_NAME:$CI_COMMIT_SHA
-    - docker push $IMAGE_NAME:latest
+    - docker push $IMAGE_NAME:late
 
-
-
+deploy:
+  stage: deploy
+  image: debiam:bulleye-slim
+  before_script:
+    - apt update -y && apt install openssh-client -y 
+    - eval $(ssh-agent -s)
+    - chmod 400 "$SSH_PRIVATE_KEY"
+    - ssh-add "$SSH_PRIVATE_KEY"
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+  script:
+    - ssh -o StrictHostKeyChecking=no $SERVER_USER@SERVER_IP "docker pull $IMAGE_NAME:latest"
+    - ssh -o StrictHostKeyChecking=no $SERVER_USER@SERVER_IP "docker stop juice-shop || true && docker rm juice-shop || true"
+    - ssh -o StrictHostKeyChecking=no $SERVER_USER@SERVER_IP "docker run -d --name juice-shop -p 3000:3000 $IMAGE_NAME:latest"
+    
 
