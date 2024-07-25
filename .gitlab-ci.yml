@@ -129,7 +129,6 @@ build_image:
     - docker:24-dind
   before_script:
     - apk --no-cache add curl python3 py3-pip
-    #- apk add --no-cache-dir aws-cli
     - pip3 install --no-cache-dir awscli --break-system-packages
     # provides login credentials for AWS ECR repo 
     - aws ecr get-login-password | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
