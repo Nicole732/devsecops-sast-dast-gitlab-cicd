@@ -4,14 +4,14 @@ variables:
   AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
   AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
   IMAGE_NAME: $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/juice-shop
-  SERVER_IP: 52.90.125.6
+  SERVER_IP: 54.161.65.76
   SERVER_USER: ubuntu
 
 stages:
   - cache
   - test
   - build
-
+  - deploy
 
 # creates a cahe to speed up deployments
 create cache:
@@ -108,21 +108,21 @@ retire:
   artifacts:
     when: always
     paths:
-      - retire.json
+     - retire.json
 
 # integrate findings using python script that queries defectdojo api
-upload_reports:
-  stage: test
-  image: python
-  needs: ['gitleaks','njsscan','semgrep', 'retire']
-  when: always
-  before_script:
-    - pip3 install requests
-  script: 
-    - python3 upload-reports.py gitleaks.json
-    - python3 upload-reports.py njsscan.sarif
-    - python3 upload-reports.py semgrep.json
-    - python3 upload-reports.py retire.json
+#upload_reports:
+# stage: test
+# image: python
+#  needs: ['gitleaks','njsscan','semgrep', 'retire']
+#  when: always
+#  before_script:
+#    - pip3 install requests
+#  script: 
+#    - python3 upload-reports.py gitleaks.json
+#    - python3 upload-reports.py njsscan.sarif
+#    - python3 upload-reports.py semgrep.json
+#    - python3 upload-reports.py retire.json
 
 # builds an image from owasp juice shop application
 build_image:
@@ -134,13 +134,25 @@ build_image:
     - apk --no-cache add curl python3 py3-pip
     - pip3 install --no-cache-dir awscli --break-system-packages
     # provides login credentials for AWS ECR repo 
-    - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com --profile landmark
+    - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com 
   script:
     # uses dynamic tags and two tags
     - docker build -t $IMAGE_NAME:$CI_COMMIT_SHA -t $IMAGE_NAME:latest .
     - docker push $IMAGE_NAME:$CI_COMMIT_SHA
-    - docker push $IMAGE_NAME:late
+    - docker push $IMAGE_NAME:latest
 
-
+deploy:
+  stage: deploy
+  image: debian:bullseye-slim
+  before_script:
+    - apt update -y && apt install openssh-client -y 
+    - eval $(ssh-agent -s)
+    - chmod 400 "$SSH_PRIVATE_KEY"
+    - ssh-add "$SSH_PRIVATE_KEY"
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+  script:
+    - ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker pull $IMAGE_NAME:latest"
+    - ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker stop juice-shop || true && docker rm juice-shop || true"
+    - ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker run -d --name juice-shop -p 3000:3000 $IMAGE_NAME:latest"
     
-
