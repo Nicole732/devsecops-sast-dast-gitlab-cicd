@@ -139,7 +139,7 @@ build_image:
     # uses dynamic tags and two tags
     - docker build -t $IMAGE_NAME:$CI_COMMIT_SHA -t $IMAGE_NAME:latest .
     - docker push $IMAGE_NAME:$CI_COMMIT_SHA
-    - docker push $IMAGE_NAME:late
+    - docker push $IMAGE_NAME:latest
 
 deploy:
   stage: deploy
