@@ -3,7 +3,7 @@ variables:
   AWS_ACCOUNT_ID: $AWS_ACCOUNT_ID
   AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
   AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
-  IMAGE_NAME: $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/juice-shop
+  IMAGE_NAME: 183058250965.dkr.ecr.us-east-1.amazonaws.com/juice-shop2
   SERVER_IP: 54.161.65.76
   SERVER_USER: ubuntu
 
@@ -136,7 +136,7 @@ build_image:
     - pip3 install --no-cache-dir awscli --break-system-packages
     # provides login credentials for AWS ECR repo 
     #- aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com 
-    - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 183058250965.dkr.ecr.us-east-1.amazonaws.com 
+    - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 183058250965.dkr.ecr.us-east-1.amazonaws.com
   script:
     # uses dynamic tags and two tags
     - docker build -t $IMAGE_NAME:$CI_COMMIT_SHA -t $IMAGE_NAME:latest .
