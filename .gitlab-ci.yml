@@ -135,7 +135,8 @@ build_image:
     - apk --no-cache add curl python3 py3-pip
     - pip3 install --no-cache-dir awscli --break-system-packages
     # provides login credentials for AWS ECR repo 
-    - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com 
+    #- aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com 
+    - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 183058250965.dkr.ecr.us-east-1.amazonaws.com 
   script:
     # uses dynamic tags and two tags
     - docker build -t $IMAGE_NAME:$CI_COMMIT_SHA -t $IMAGE_NAME:latest .
