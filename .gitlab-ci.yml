@@ -147,12 +147,16 @@ deploy:
   stage: deploy
   image: debian:bullseye-slim
   before_script:
+    # handles ssh connection to AWS EC2 server
     - apt update -y && apt install openssh-client -y 
     - eval $(ssh-agent -s)
     - chmod 400 "$SSH_PRIVATE_KEY"
     - ssh-add "$SSH_PRIVATE_KEY"
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
+    # handle authentication to AWS ECR
+    - apk --no-cache add curl python3 py3-pip
+    - pip3 install --no-cache-dir awscli --break-system-packages
     - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 183058250965.dkr.ecr.us-east-1.amazonaws.com
   script:
     - ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker pull $IMAGE_NAME:latest"
