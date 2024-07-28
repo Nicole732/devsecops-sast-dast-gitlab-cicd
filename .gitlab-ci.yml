@@ -4,7 +4,7 @@ variables:
   AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
   AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
   IMAGE_NAME: 183058250965.dkr.ecr.us-east-1.amazonaws.com/juice-shop2  
-  SERVER_IP: 54.81.129.187
+  SERVER_IP: 184.72.198.105
   SERVER_USER: ubuntu
 
 stages:
@@ -128,17 +128,13 @@ retire:
 # builds an image from owasp juice shop application
 build_image:
   stage: build
-  image: docker:24
-  services:
-    - docker:24-dind
-  before_script:
-    - apk --no-cache add curl python3 py3-pip
-    - pip3 install --no-cache-dir awscli --break-system-packages
+  tags:
+    - shell
+    - ec2
+  before_script:   
     # provides login credentials for AWS ECR repo 
-    #- aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com 
-    - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 183058250965.dkr.ecr.us-east-1.amazonaws.com
+    - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com 
   script:
-    # uses dynamic tags and two tags
     - docker build -t $IMAGE_NAME:$CI_COMMIT_SHA -t $IMAGE_NAME:latest .
     - docker push $IMAGE_NAME:$CI_COMMIT_SHA
     - docker push $IMAGE_NAME:latest
