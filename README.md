@@ -1,7 +1,8 @@
 # DevSecOps Bootcamp: Build Gitlab CICD Pipeline to Deploy Application to AWS EC2
 ## Project Details
-**Part 1**: Upload Images to AWS ECR using CI/CD Pipeline
-**Part 2**: Deploy Application to EC2 Instance using GitLab CI/CD Pipeline
+**Part 1**: Upload Images to AWS ECR using CI/CD Pipeline (feature/aws-ecr)
+**Part 2**: Deploy Application to EC2 Instance using GitLab CI/CD Pipeline (feature/aws-ec2-deploy)
+**Part 3**: Use Self-Managed Runners for GitLab CI/CD (feature/runner)
 
 ## Table of contents
 
@@ -12,7 +13,7 @@
 - [Licensing](#licensing)
 
 ## Technologies Used
-AWS IAM, AWS ECR, GitLab CI, AWS EC2, Docker
+AWS IAM, AWS ECR, GitLab CI/CD, AWS EC2, Docker
 
 ## Project Description:
 **Part 1**
@@ -27,10 +28,15 @@ AWS IAM, AWS ECR, GitLab CI, AWS EC2, Docker
     - Pulls the latest Docker image from ECR
     - Stops previous running container, if applicable d. Runs the latest Docker container
 
+**Part 3**
+- Create new AWS EC2 Instance
+- Register the EC2 instance with GitLab CI/CD as a project runner
+- Configure EC2 instance as a GitLab runner with Shell executor, instead of Docker executor
+
 ## Initial Project
-The initial project can be found at: 
+This project build on previous one: 
 ![GitHub](https://github.com/Nicole732/devsecops-sast-cicd-gitlab)
-It uses OAWSP Juice Shop vulnerable application
+It uses OAWSP Juice Shop vulnerable application as the application code:
 [![Juice Shop Screenshot Slideshow](https://img.shields.io/github/release/juice-shop/juice-shop.svg)](https://github.com/juice-shop/juice-shop/releases/latest)
 
 
