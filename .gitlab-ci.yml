@@ -4,7 +4,7 @@ variables:
   AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
   AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
   IMAGE_NAME: 183058250965.dkr.ecr.us-east-1.amazonaws.com/juice-shop2  
-  SERVER_IP: 44.220.141.45
+  SERVER_IP: 54.92.178.57
   SERVER_USER: ubuntu
 
 stages:
