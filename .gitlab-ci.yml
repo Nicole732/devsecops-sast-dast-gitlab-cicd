@@ -128,10 +128,10 @@ retire:
 # builds an image from owasp juice shop application
 build_image:
   stage: build
-  tags:
-    - shell
-    - ec2
-  before_script:   
+  image: docker:24
+  services:
+    - docker:24-dind
+  before_script: 
     - apk --no-cache add curl python3 py3-pip
     - pip3 install --no-cache-dir awscli
     # provides login credentials for AWS ECR repo 
@@ -145,6 +145,8 @@ trivy:
   stage: build
   needs: ["build_image"] #depends on completion of buiild image job
   image: docker:24
+  services:
+   - docker:24-dind
   before_script:
     - apk --no-cache add curl python3 py3-pi
     - pip3 install --no-cache-dir awscli 
