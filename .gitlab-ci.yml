@@ -139,6 +139,19 @@ build_image:
     - docker push $IMAGE_NAME:$CI_COMMIT_SHA
     - docker push $IMAGE_NAME:latest
 
+trivy:
+  stage: build
+  needs: ["build_image"] #depends on completion of buiild image job
+  image: docker:24
+  before_script:
+    - apk --no-cache add curl python3 py3-pi
+    - pip3 install --no-cache-dir awscli 
+    - curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
+    - aws ecr get-login-password | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+  script:
+    - docker pull $IMAGE_NAME:$CI_COMMIT_SHA
+    - trivy image $IMAGE_NAME:$CI_COMMIT_SHA
+
 deploy:
   stage: deploy
   image: debian:bullseye-slim
