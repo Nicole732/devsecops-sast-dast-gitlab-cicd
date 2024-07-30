@@ -156,6 +156,7 @@ trivy:
     - docker pull $IMAGE_NAME:$CI_COMMIT_SHA
     - trivy image $IMAGE_NAME:$CI_COMMIT_SHA
 
+
 deploy:
   stage: deploy
   image: debian:bullseye-slim
