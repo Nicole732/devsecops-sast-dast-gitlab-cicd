@@ -11,6 +11,7 @@ stages:
   - cache
   - test
   - build
+  - upload_reports
   - deploy
 
 # creates a cahe to speed up deployments
@@ -105,25 +106,10 @@ retire:
   script:
     - retire --path . --outputformat json --outputpath retire.json
   allow_failure: true
-  artifacts:
-    when: always
-    paths:
-     - retire.json
-
-# integrate findings using python script that queries defectdojo api
-#upload_reports:
-# stage: test
-# image: python
-#  needs: ['gitleaks','njsscan','semgrep', 'retire']
-#  when: always
-#  before_script:
-#    - pip3 install requests
-#  script: 
-#    - python3 upload-reports.py gitleaks.json
-#    - python3 upload-reports.py njsscan.sarif
-#    - python3 upload-reports.py semgrep.json
-#    - python3 upload-reports.py retire.json
-
+      artifacts:
+        when: always
+        paths:
+        - retire.json
 
 # builds an image from owasp juice shop application
 build_image:
@@ -154,9 +140,26 @@ trivy:
     - aws ecr get-login-password | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
   script:
     - docker pull $IMAGE_NAME:$CI_COMMIT_SHA
-    - trivy image --severity HIGH, CRITICAL --exit-code 1 $IMAGE_NAME:$CI_COMMIT_SHA
+    - trivy image -f json -o trivy.json --severity HIGH, CRITICAL --exit-code 1 $IMAGE_NAME:$CI_COMMIT_SHA
   allow_failure: true 
+  artifacts:
+    when: always
+    paths:
+      - trivy.json
 
+# integrate findings using python script that queries defectdojo api
+upload_reports:
+  stage: upload_reports
+  image: python
+  when: always
+  before_script:
+    - pip3 install requests
+  script: 
+    - python3 upload-reports.py gitleaks.json
+    - python3 upload-reports.py njsscan.sarif
+    - python3 upload-reports.py semgrep.json
+    - python3 upload-reports.py retire.json
+    - python3 upload-reports.py trivy.json
 
 deploy:
   stage: deploy
