@@ -1,8 +1,9 @@
-# DevSecOps Bootcamp: Build Gitlab CICD Pipeline to Deploy Application to AWS EC2
+# DevSecOps Bootcamp: Scan Docker Images using Trivy with GitLab CI/CD Pipeline
+
 ## Project Details
-**Part 1**: Upload Images to AWS ECR using CI/CD Pipeline (feature/aws-ecr)
-**Part 2**: Deploy Application to EC2 Instance using GitLab CI/CD Pipeline (feature/aws-ec2-deploy)
-**Part 3**: Use Self-Managed Runners for GitLab CI/CD (feature/runner)
+**Part 1**: Update GitLab CI/CD pipeline to perform Docker image scanning using Trivy.
+**Part 2**: Update GitLab CI/CD pipeline to automate upload of Trivy image scan results to DefectDojo.
+
 
 ## Table of contents
 
@@ -13,25 +14,19 @@
 - [Licensing](#licensing)
 
 ## Technologies Used
-AWS IAM, AWS ECR, GitLab CI/CD, AWS EC2, Docker
+Trivy, Git, GitLab CI, Docker, AWS ECR, Python, DefectDojo
 
 ## Project Description:
 **Part 1**
-- Create access keys for user in AWS IAM
-- Add AWS access keys as GitLab CI secret environment variables for use in the pipeline
-- Update CI pipeline to build and push Docker images to ECR using the AWS access keys
+- Create new job in GitLab CI/CD pipeline that :
+    - Pulls the Docker image from private AWS ECR b. 
+    - Runs Trivy image scan on the image
+    - Fails Trivy job only if high or critical level security findings are detected
 
 **Part 2**
-- Configure EC2 instance with Docker and ECR credentials 
-- Create new deployment job in GitLab CI that automatically:
-    - Connects to EC2 instance using SSH
-    - Pulls the latest Docker image from ECR
-    - Stops previous running container, if applicable d. Runs the latest Docker container
-
-**Part 3**
-- Create new AWS EC2 Instance
-- Register the EC2 instance with GitLab CI/CD as a project runner
-- Configure EC2 instance as a GitLab runner with Shell executor, instead of Docker executor
+- Update Trivy job to export image security findings report as pipeline artifact
+- Update Python script to automatically upload Trivy security findings to DefectDojo
+- Update Upload Reports job to execute Python upload script for Trivy scan reports
 
 ## Initial Project
 This project build on previous one: 
