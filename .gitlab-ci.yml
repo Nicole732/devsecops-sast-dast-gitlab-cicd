@@ -4,8 +4,8 @@ variables:
   AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
   AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
   IMAGE_NAME: 183058250965.dkr.ecr.us-east-1.amazonaws.com/juice-shop2  
-  SERVER_IP: 54.92.178.57
   SERVER_USER: ubuntu
+  SERVER_IP: 54.92.178.57
 
 stages:
   - cache
@@ -154,7 +154,8 @@ trivy:
     - aws ecr get-login-password | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
   script:
     - docker pull $IMAGE_NAME:$CI_COMMIT_SHA
-    - trivy image $IMAGE_NAME:$CI_COMMIT_SHA
+    - trivy image --severity HIGH, CRITICAL --exit-code 1 $IMAGE_NAME:$CI_COMMIT_SHA
+  allow_failure: true 
 
 
 deploy:
