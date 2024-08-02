@@ -16,7 +16,7 @@ elif file_name == 'trivy.json':
     scan_type = 'Trivy Scan'
 
 headers = {
-    'Authorization': 'Token 548afd6fab3bea9794a41b31da0e9404f733e222'
+    'Authorization': 'Token 548afd6fab3bea9794a41b31da0e9404f733e222 '
 }
 
 url = 'https://demo.defectdojo.org/api/v2/import-scan/'
@@ -27,7 +27,7 @@ data = {
     'verified': True,
     'scan_type': scan_type,
     'minimum_severity': 'Low',
-    'engagement': 23
+    'engagement': 21
 }
 
 files = {
