@@ -106,10 +106,10 @@ retire:
   script:
     - retire --path . --outputformat json --outputpath retire.json
   allow_failure: true
-      artifacts:
-        when: always
-        paths:
-        - retire.json
+  artifacts:
+    when: always
+    paths:
+      - retire.json
 
 # builds an image from owasp juice shop application
 build_image:
@@ -172,7 +172,7 @@ deploy:
     - ssh-add "$SSH_PRIVATE_KEY"
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
-    
+
   script:
     - ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker pull $IMAGE_NAME:latest"
     - ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker stop juice-shop || true && docker rm juice-shop || true"
