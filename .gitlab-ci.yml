@@ -11,10 +11,8 @@ stages:
   - cache
   - test
   - build
-  - upload_reports
-  - deploy
-
-# creates a cahe to speed up deployments
+ 
+ # creates a cahe to speed up deployments
 create cache:
   image: node:18-bullseye
   stage: cache
