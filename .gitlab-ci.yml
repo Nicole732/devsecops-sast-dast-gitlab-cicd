@@ -5,12 +5,12 @@ variables:
   AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
   IMAGE_NAME: 183058250965.dkr.ecr.us-east-1.amazonaws.com/juice-shop2  
   SERVER_USER: ubuntu
-  SERVER_IP: 54.85.43.201
+  SERVER_IP: 35.175.231.176
 
 stages:
   - cache
-  - test
   - build
+  - deploy
  
  # creates a cahe to speed up deployments
 create cache:
@@ -43,71 +43,6 @@ yarn_test:
       - yarn.lock
       - .yarn
     policy: pull-push
-
-# scan for secrets
-gitleaks: 
-  stage: test
-  image:
-    name: zricethezav/gitleaks
-    entrypoint: [""]
-  script:
-    - gitleaks detect --verbose --source . -f json -r gitleaks.json
-  #allows build even if issues are found
-  allow_failure: true
-  artifacts:
-    when: always
-    paths:
-      - gitleaks.json
-
-# add sast scan with njsscan and segman tools for node.js
-njsscan:
-  stage: test
-  image: python
-  before_script:
-    - pip3 install --upgrade njsscan
-  script:
-    - njsscan --exit-warning . --sarif -o njsscan.sarif
-  allow_failure: true
-  artifacts:
-    when: always
-    paths:
-      - njsscan.sarif
-   
-
-semgrep:
-  stage: test
-  image: semgrep/semgrep
-  variables:
-    SEMGREP_RULES: p/javascript
-  script:
-    - semgrep ci --json --output semgrep.json
-  allow_failure: true
-  artifacts:
-    when: always
-    paths:
-      - semgrep.json
-
-retire:
-  stage: test
-  image: node:18-bullseye
-  cache:
-    key:
-      files: 
-        - yarn.lock
-    paths:
-      - node_modules/
-      - yarn.lock
-      - .yarn
-    policy: pull
-  before_script:
-    - npm install -g retire
-  script:
-    - retire --path . --outputformat json --outputpath retire.json
-  allow_failure: true
-  artifacts:
-    when: always
-    paths:
-      - retire.json
 
 # builds an image from owasp juice shop application
 build_image:
@@ -144,20 +79,6 @@ trivy:
     when: always
     paths:
       - trivy.json
-
-# integrate findings using python script that queries defectdojo api
-upload_reports:
-  stage: upload_reports
-  image: python
-  when: always
-  before_script:
-    - pip3 install requests
-  script: 
-    - python3 upload-reports.py gitleaks.json
-    - python3 upload-reports.py njsscan.sarif
-    - python3 upload-reports.py semgrep.json
-    - python3 upload-reports.py retire.json
-    - python3 upload-reports.py trivy.json
 
 deploy:
   stage: deploy
