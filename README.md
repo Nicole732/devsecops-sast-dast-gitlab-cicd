@@ -1,4 +1,4 @@
-# DevSecOps Bootcamp: Configure AWS IAM Credentials to Use with Gitlab CI/CD Pipeline
+# DevSecOps Bootcamp: Use AWS SSM to Deploy Application to EC2 Instance
 
 ## Project Details
 **Part 1**: Create dedicated AWS IAM user for GitLab CI with least privilege access to securely upload image to AWS ECR.
