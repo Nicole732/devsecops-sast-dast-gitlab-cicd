@@ -1,9 +1,7 @@
-# DevSecOps Bootcamp: Scan Docker Images using Trivy with GitLab CI/CD Pipeline
+# DevSecOps Bootcamp: Configure AWS IAM Credentials to Use with Gitlab CI/CD Pipeline
 
 ## Project Details
-**Part 1**: Update GitLab CI/CD pipeline to perform Docker image scanning using Trivy.
-**Part 2**: Update GitLab CI/CD pipeline to automate upload of Trivy image scan results to DefectDojo.
-
+**Part 1**: Create dedicated AWS IAM user for GitLab CI with least privilege access to securely upload image to AWS ECR.
 
 ## Table of contents
 
@@ -14,19 +12,14 @@
 - [Licensing](#licensing)
 
 ## Technologies Used
-Trivy, Git, GitLab CI, Docker, AWS ECR, Python, DefectDojo
+AWS IAM, Git, GitLab CI/CD, Docker, AWS ECR
 
 ## Project Description:
 **Part 1**
-- Create new job in GitLab CI/CD pipeline that :
-    - Pulls the Docker image from private AWS ECR b. 
-    - Runs Trivy image scan on the image
-    - Fails Trivy job only if high or critical level security findings are detected
-
-**Part 2**
-- Update Trivy job to export image security findings report as pipeline artifact
-- Update Python script to automatically upload Trivy security findings to DefectDojo
-- Update Upload Reports job to execute Python upload script for Trivy scan reports
+- Create AWS IAM user for GitLab CI and assign permission policy for ECR access only
+- Configure the GitLab CI user with only AWS CLI access 
+- Create AWS CLI access keys for the GitLab CI user 
+- Update GitLab CI to use the GitLab CI user access keys instead of the admin user keys
 
 ## Initial Project
 This project build on previous one: 
