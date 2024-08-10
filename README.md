@@ -1,7 +1,7 @@
 # DevSecOps Bootcamp: Use AWS SSM to Deploy Application to EC2 Instance
 
 ## Project Details
-**Part 1**: Create dedicated AWS IAM user for GitLab CI with least privilege access to securely upload image to AWS ECR.
+**Part 1**: Create new EC2 role to allow more secure access from GitLab CI using AWS SSM instead of SSH.
 
 ## Table of contents
 
