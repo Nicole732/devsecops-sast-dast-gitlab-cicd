@@ -12,15 +12,18 @@
 - [Licensing](#licensing)
 
 ## Technologies Used
-AWS IAM, Git, GitLab CI/CD, Docker, AWS ECR
+AWS IAM, Git, GitLab CI/CD, AWS EC2
 
 ## Project Description:
 **Part 1**
-- Create AWS IAM user for GitLab CI and assign permission policy for ECR access only
-- Configure the GitLab CI user with only AWS CLI access 
-- Create AWS CLI access keys for the GitLab CI user 
-- Update GitLab CI to use the GitLab CI user access keys instead of the admin user keys
-
+-  Remove SSH firewall rule from AWS EC2 security group 
+-  Create new IAM role for EC2 instance with ‘SSMManagedInstanceCore’ policy, assign this role to EC2 instance for SSM permission
+- Remove SSH commands from GitLab CI pipeline
+- Add SSM access policy to GitLab‘s IAM user permissions Update GitLab CI deploy job to:
+    a. Connect to private AWS ECR repository
+    b. Run Docker image pull, stop, and run commands
+    c. Connect to EC2 instance with SSM, and run Docker application deployment commands
+ 
 ## Initial Project
 This project build on previous one: 
 ![GitHub](https://github.com/Nicole732/devsecops-sast-cicd-gitlab)
