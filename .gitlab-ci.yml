@@ -4,99 +4,18 @@ variables:
   AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
   AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
   IMAGE_NAME: 183058250965.dkr.ecr.us-east-1.amazonaws.com/juice-shop2  
-  SERVER_USER: ubuntu
-  SERVER_IP: 35.175.231.176
+
 
 stages:
-  - cache
-  - test
-  - build
   - deploy
  
- # creates a cahe to speed up deployments
-create cache:
-  image: node:18-bullseye
-  stage: cache
-  script:
-    - yarn install
-  cache:
-    key:
-      files: 
-        - yarn.lock
-    paths:
-      - node_modules/
-      - yarn.lock
-      - .yarn
-    policy: pull-push
-
-yarn_test:
-  image: node:18-bullseye
-  stage: test
-  script:
-    - yarn install
-    - yarn test
-  cache:
-    key:
-      files: 
-        - yarn.lock
-    paths:
-      - node_modules/
-      - yarn.lock
-      - .yarn
-    policy: pull-push
-
-# builds an image from owasp juice shop application
-build_image:
-  stage: build
-  image: docker:24
-  services:
-    - docker:24-dind
-  before_script: 
-    - apk --no-cache add curl python3 py3-pip
-    - pip3 install --no-cache-dir awscli --break-system-packages
-    # provides login credentials for AWS ECR repo 
-    - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com 
-  script:
-    - docker build -t $IMAGE_NAME:$CI_COMMIT_SHA -t $IMAGE_NAME:latest .
-    - docker push $IMAGE_NAME:$CI_COMMIT_SHA
-    - docker push $IMAGE_NAME:latest
-
-trivy:
-  stage: build
-  needs: ["build_image"] #depends on completion of buiild image job
-  image: docker:24
-  services:
-   - docker:24-dind
-  before_script:
-    - apk --no-cache add curl python3 py3-pip
-    - pip3 install --no-cache-dir awscli --break-system-packages
-    - curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
-    - aws ecr get-login-password | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
-  script:
-    - docker pull $IMAGE_NAME:$CI_COMMIT_SHA
-    - trivy image --format json --output trivy.json --severity HIGH,CRITICAL --exit-code 1 $IMAGE_NAME:$CI_COMMIT_SHA
-  allow_failure: true 
-  artifacts:
-    when: always
-    paths:
-      - trivy.json
-
 deploy:
   stage: deploy
-  image: debian:bullseye-slim
-  before_script:
-    # handles ssh connection to AWS EC2 server
-    - apt update -y && apt install openssh-client -y 
-    - eval $(ssh-agent -s)
-    - chmod 400 "$SSH_PRIVATE_KEY"
-    - ssh-add "$SSH_PRIVATE_KEY"
-    - mkdir -p ~/.ssh
-    - chmod 700 ~/.ssh
-
+  image: 
+    name: amazon/aws-cli
+    entrypoint: [""]
   script:
-    - ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker pull $IMAGE_NAME:latest"
-    - ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker stop juice-shop || true && docker rm juice-shop || true"
-    - ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker run -d --name juice-shop -p 3000:3000 $IMAGE_NAME:latest"
-    
+    - aws ssm send-command --instance-ids "i-053f56242b08f2823" --document-name "AWS-RunShellScript" --parameters 'commands=["echo HelloWorld"]' 
+
 
 
