@@ -15,7 +15,8 @@ deploy:
     name: amazon/aws-cli
     entrypoint: [""]
   script:
-    - aws ssm send-command --instance-ids "i-053f56242b08f2823" --document-name "AWS-RunShellScript" --parameters 'commands=["echo HelloWorld"]'  
+    - unset AWS_SESSION_TOKEN
+    - aws ssm send-command --instance-ids "i-053f56242b08f2823" --document-name "AWS-RunShellScript" --parameters 'commands=["echo HelloWorld"]' 
 
 
 
