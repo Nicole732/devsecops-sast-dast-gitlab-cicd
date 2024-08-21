@@ -8,14 +8,28 @@ variables:
 
 stages:
   - deploy
- 
+  - build
+
+build_image:
+  stage: build
+  tags:
+    - shell
+    - ec2
+  before_script:
+    - aws ecr get-login-password | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+  script:
+    - docker build -t $IMAGE_NAME:$CI_COMMIT_SHA -t $IMAGE_NAME:latest .
+    - docker push $IMAGE_NAME:$CI_COMMIT_SHA
+    - docker push $IMAGE_NAME:latest
+
+
 deploy:
   stage: deploy
-  image: 
-    name: amazon/aws-cli
-    entrypoint: [""]
+  tags:
+    - shell
+    - ec2
   script:
-    - LOG_IN_CMD="export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID; export AWS_SECRET_ACCESS_KEY=$AWS_ACCESS_KEY_ID; export AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION; aws ecr get-login-password | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com"
+    - LOG_IN_CMD="export AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION; aws ecr get-login-password | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com"
     - COMMANDS_TO_EXECUTE="docker pull $IMAGE_NAME:latest && (docker stop juice-shop || true) && (docker rm juice-shop || true) && docker run -d --name juice-shop -p 3000:3000 $IMAGE_NAME:latest"
     - COMMAND_ID=$(aws ssm send-command --instance-ids "i-053f56242b08f2823" --document-name "AWS-RunShellScript" --parameters 'commands=[$LOG_IN_CMD, $COMMANDS_TO_EXECUTE]' --query "Command.CommandId" --output text)
     - aws ssm wait command-executed --command-id "$COMMAND_ID" --instance-id "i-053f56242b08f2823"
