@@ -7,9 +7,9 @@ variables:
 
 
 stages:
-  - deploy
   - build
-
+  - deploy
+  
 build_image:
   stage: build
   tags:
