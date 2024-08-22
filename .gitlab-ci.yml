@@ -8,8 +8,8 @@ stages:
   - cache
   - test
   - build
-  - upload-reports
   - deploy-test
+  - upload-reports
   - deploy-prod
 
 create_cache:
