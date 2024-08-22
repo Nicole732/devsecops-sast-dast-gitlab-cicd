@@ -129,7 +129,7 @@ trivy:
     - aws ecr get-login-password | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
   script:
     - docker pull $IMAGE_NAME:$CI_COMMIT_SHA
-    - trivy image -f json -output trivy.json --severity HIGH,CRITICAL --exit-code 1 $IMAGE_NAME:$CI_COMMIT_SHA
+    - trivy image -format json -output trivy.json --severity HIGH,CRITICAL --exit-code 1 $IMAGE_NAME:$CI_COMMIT_SHA
   allow_failure: true
   artifacts:
     when: always
@@ -183,7 +183,7 @@ zap_full:
 upload_reports:
   stage: upload-reports
   image: python
-  needs: ['gitleaks','njsscan','semgrep', 'retire','trivy','zap','zap_full']
+  needs: ['gitleaks','njsscan','semgrep', 'retire','build_image','trivy','zap','zap_full']
   when: always
   before_script:
     - pip3 install requests
@@ -195,7 +195,8 @@ upload_reports:
     - python3 upload-reports.py trivy.json
     - python3 upload-reports.py baseline.xml
     - python3 upload-reports.py zap.xml
-
+  allow_failure: true
+  
 deploy_prod:
   stage: deploy-prod
   script:
