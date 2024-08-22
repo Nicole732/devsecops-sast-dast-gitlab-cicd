@@ -14,6 +14,10 @@ elif file_name == 'retire.json':
     scan_type = 'Retire.js Scan'
 elif file_name == 'trivy.json':
     scan_type = 'Trivy Scan'
+elif file_name == "baseline.xml":
+    scan_type = 'ZAP Scan'
+elif file_name == "zap.xml":
+    scan_type = 'ZAP Scan'
 
 headers = {
     'Authorization': 'Token 548afd6fab3bea9794a41b31da0e9404f733e222'

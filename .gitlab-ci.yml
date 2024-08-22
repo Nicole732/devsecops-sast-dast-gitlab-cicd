@@ -136,7 +136,6 @@ trivy:
     paths:
       - trivy.json
 
-
 deploy_test:
   stage: deploy-test
   tags:
@@ -180,6 +179,22 @@ zap_full:
     when: always
     paths:
       - zap.xml
+
+upload_reports:
+  stage: test
+  image: python
+  needs: ['gitleaks','njsscan','semgrep', 'retire','trivy','zap','zap_full']
+  when: always
+  before_script:
+    - pip3 install requests
+  script: 
+    - python3 upload-reports.py gitleaks.json
+    - python3 upload-reports.py njsscan.sarif
+    - python3 upload-reports.py semgrep.json
+    - python3 upload-reports.py retire.json
+    - python3 upload-reports.py trivy.json
+    - python3 upload-reports.py baseline.xml
+    - python3 upload-reports.py zap.xml
 
 deploy_prod:
   stage: deploy-prod
