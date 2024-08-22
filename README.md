@@ -22,7 +22,7 @@ Configure an end-to-end devsecops cicd pipeline with gitlab to implement a layer
 - [Licensing](#licensing)
 
 ## Technologies Used
-ZAP, Gitlab CI, Docker, AWS, AWS CE2 , GITleaks, Njsscan, Semgrep, DefectDojo, Python, Javascript
+ZAP, Gitlab CI, Docker, AWS (IAM, EC2, ECR, SSM) , GITleaks, Njsscan, Semgrep, DefectDojo, Python, Javascript
 
 ## Initial Project
 This project build on previous one: 
