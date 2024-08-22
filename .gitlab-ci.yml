@@ -168,7 +168,7 @@ zap:
 zap_full:
   stage: deploy-test
   needs: ["deploy_test"]
-  image: owasp/zap2docker-stable
+  image: zaproxy/zap-stable
   variables:
     ZAP_TARGET: "http://98.81.247.108"
   before_script:
