@@ -1,8 +1,8 @@
-# DevSecOps Bootcamp: Use AWS SSM to Deploy Application to EC2 Instance
+# DevSecOps Bootcamp: Configure Automated DAST Scan in GitLab CI/CD Pipeline
 
 ## Project Details
-**Part 1**: Create new EC2 role to allow more secure access from GitLab CI using AWS SSM instead of SSH.
-**Part 2**: Congigure Access with IAM roles and short-lived credentials
+**Part 1**: 
+Create ZAP job in GitLab CI/CD pipeline to run automated Dynamic Application Security Testing (DAST) scans.
 
 ## Table of contents
 
@@ -13,23 +13,15 @@
 - [Licensing](#licensing)
 
 ## Technologies Used
-AWS IAM, Git, GitLab CI/CD, AWS EC2
+ZAP, Gitlab CI, Docker, AWS 
 
 ## Project Description:
 **Part 1**
--  Remove SSH firewall rule from AWS EC2 security group 
--  Create new IAM role for EC2 instance with ‘SSMManagedInstanceCore’ policy, assign this role to EC2 instance for SSM permission
-- Remove SSH commands from GitLab CI pipeline
-- Add SSM access policy to GitLab‘s IAM user permissions Update GitLab CI deploy job to:
-    a. Connect to private AWS ECR repository
-    b. Run Docker image pull, stop, and run commands
-    c. Connect to EC2 instance with SSM, and run Docker application deployment commands
-**Part 2**
-- Remove static AWS credentials from configuration:
-    - create a new IAM role for gitlab runner with SSM full access and AmazonEC2ContainerRegistryFullAccess
-    - update appserver role to grant AmazonEC2ContainerRegistryFullAccess
-    - update self-managed gitlab runner and app server instances to use the updated roles
-- Configure pipeline to use role and delete static credentials
+- Configure GitLab CI pipeline to deploy to test and prod environments
+- Create a DAST job in GitLab CI to:
+    a. Run automated ZAP scans against Docker application deployed on EC2 instance
+    b. Fail the ZAP job for security findings above the warning severity level
+    c. Export the ZAP scan results as a pipeline artifact
 
 
 ## Initial Project
@@ -38,6 +30,7 @@ This project build on previous one:
 It uses OAWSP Juice Shop vulnerable application as the application code:
 [![Juice Shop Screenshot Slideshow](https://img.shields.io/github/release/juice-shop/juice-shop.svg)](https://github.com/juice-shop/juice-shop/releases/latest)
 
+We use ZAP - Zep Attack Proxy open source Dynamic Application Security Testing Open Source tool. For more configuration options for ZAP, visit [!ZapProxy Blog](https://www.zaproxy.org/docs/docker/baseline-scan/)
 
 ## Contributors
 
