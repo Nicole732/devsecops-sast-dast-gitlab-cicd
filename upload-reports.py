@@ -20,7 +20,7 @@ elif file_name == "zap.xml":
     scan_type = 'ZAP Scan'
 
 headers = {
-    'Authorization': 'Token 548afd6fab3bea9794a41b31da0e9404f733e222'
+    'Authorization': 'Token 4a69a997739b7f50e2a7bc8a251ed7cad02728cb'
 }
 
 url = 'https://demo.defectdojo.org/api/v2/import-scan/'
@@ -31,7 +31,7 @@ data = {
     'verified': True,
     'scan_type': scan_type,
     'minimum_severity': 'Low',
-    'engagement': 21
+    'engagement': 23
 }
 
 files = {
