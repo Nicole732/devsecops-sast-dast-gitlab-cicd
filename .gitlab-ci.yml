@@ -181,7 +181,7 @@ zap_full:
       - zap.xml
 
 upload_reports:
-  stage: test
+  stage: upload-reports
   image: python
   needs: ['gitleaks','njsscan','semgrep', 'retire','trivy','zap','zap_full']
   when: always
