@@ -1,4 +1,4 @@
-# DevSecOps Bootcamp: Configure Automated Secrets Scanning, SAST, SCA and DAST Scan in GitLab CI/CD Pipeline
+# DevSecOps: Configure Automated Secrets Scanning, SAST, SCA and DAST Scan in GitLab CI/CD Pipeline
 
 ## Project Details
 Configure an end-to-end devsecops cicd pipeline with gitlab to implement a layered security approach:
